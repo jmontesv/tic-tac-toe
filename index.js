@@ -1,22 +1,39 @@
 const wrapper = document.querySelector(".wrapper");
+const winnerCont = document.querySelector(".winner");
 const boxesData = ["-", "-", "-", "-", "-", "-", "-", "-", "-"];
 let turn = "x";
-// TODO: Hacer algun elemento por pantalla cuando gane un jugador y que se resetee el juego
 
-wrapper.addEventListener("click", (event) => {
+function handleClick(event) {
   const box = event.target;
   const position = Number(box.getAttribute("data-position"));
   changeValueBox(turn, position);
-  if (checkWinner()) console.log("EL ganador es", turn);
   clearBoxes();
   renderBoard(boxesData);
+  if (checkWinner()) renderWinner(turn);
   turn = turn === "x" ? "o" : "x";
-});
+}
+wrapper.addEventListener("click", handleClick);
+
+function renderWinner(turn) {
+  wrapper.removeEventListener("click", handleClick);
+  const textElement = document.createElement("h2");
+  textElement.textContent = "EL GANADOR ES " + turn;
+  winnerCont.innerHTML = "";
+  winnerCont.appendChild(textElement);
+  const button = document.createElement("button");
+  button.textContent = "Reiniciar";
+  button.addEventListener("click", () => {
+    boxesData.fill("-", 0);
+    clearBoxes();
+    renderBoard(boxesData);
+    winnerCont.innerHTML = "";
+    wrapper.addEventListener("click", handleClick);
+  });
+  winnerCont.appendChild(button);
+}
 
 function clearBoxes() {
-  wrapper.querySelectorAll(".wrapper__box").forEach((box) => {
-    wrapper.removeChild(box);
-  });
+  wrapper.innerHTML = "";
 }
 
 function renderBoard(boxesData) {
@@ -34,7 +51,6 @@ function changeValueBox(newValue, index) {
     if (i === index) arrayAll[i] = newValue;
   });
 }
-
 function checkWinner() {
   if (
     (boxesData[0] === boxesData[1] &&

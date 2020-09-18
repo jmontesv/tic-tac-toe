@@ -23,3 +23,13 @@ body {
   border: 1px solid black;
   cursor: pointer;
 }
+.winner {
+  width: 300px;
+  margin: 0 auto;
+  height: 50px;
+  background-color: lightsalmon;
+  display: flex;
+  gap: 0.2rem;
+  justify-content: center;
+  align-items: center;
+}
