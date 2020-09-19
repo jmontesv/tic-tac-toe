@@ -9,6 +9,7 @@ function handleClick(event) {
   changeValueBox(turn, position);
   clearBoxes();
   renderBoard(boxesData);
+  if (checkDraw()) renderDraw();
   if (checkWinner()) renderWinner(turn);
   turn = turn === "x" ? "o" : "x";
 }
@@ -34,6 +35,26 @@ function renderWinner(turn) {
 
 function clearBoxes() {
   wrapper.innerHTML = "";
+}
+
+function renderDraw() {
+  wrapper.removeEventListener("click", handleClick);
+  const drawElement = document.createElement("div", { class: "winner" });
+  const button = document.createElement("button");
+  drawElement.textContent = "Empate";
+  button.textContent = "Reiniciar";
+  button.addEventListener("click", () => {
+    clearBoxes();
+    boxesData.fill("-", 0);
+    renderBoard(boxesData);
+    winnerCont.innerHTML = "";
+    wrapper.addEventListener("click", handleClick);
+  });
+  winnerCont.appendChild(drawElement);
+  drawElement.appendChild(button);
+}
+function checkDraw() {
+  return checkWinner() === false && !boxesData.includes("-") ? true : false;
 }
 
 function renderBoard(boxesData) {
@@ -79,6 +100,7 @@ function checkWinner() {
       boxesData[6] !== "-")
   )
     return true;
+  return false;
 }
 
 renderBoard(boxesData);
