@@ -23,8 +23,8 @@ function renderWinner(turn) {
   const button = document.createElement("button");
   button.textContent = "Reiniciar";
   button.addEventListener("click", () => {
-    boxesData.fill("-", 0);
     clearBoxes();
+    boxesData.fill("-", 0);
     renderBoard(boxesData);
     winnerCont.innerHTML = "";
     wrapper.addEventListener("click", handleClick);
@@ -47,8 +47,8 @@ function renderBoard(boxesData) {
 }
 
 function changeValueBox(newValue, index) {
-  boxesData.forEach((_, i, arrayAll) => {
-    if (i === index) arrayAll[i] = newValue;
+  boxesData.forEach((value, i, arrayAll) => {
+    if (i === index && value === "-") arrayAll[i] = newValue;
   });
 }
 function checkWinner() {
