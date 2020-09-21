@@ -1,14 +1,32 @@
-function UI() {
-  this.winnerCont = document.querySelector(".winner");
-  this.wrapperBoard = document.querySelector(".wrapper");
+this.winnerCont = document.querySelector(".wrapper-winner");
+this.wrapperBoard = document.querySelector(".wrapper-board");
 
+function UI(wrapperBoard, wrapperWinner) {
+  this.winnerCont = wrapperWinner;
+  this.wrapperBoard = wrapperBoard;
+  this.calculateClassNameBox = function calculateClassNameBox(indexBox) {
+    let className = "wrapper-board__box";
+    if (Number(indexBox) === 0 || Number(indexBox) === 3)
+      className =
+        "wrapper-board__box wrapper-board__box--border-right wrapper-board__box--border-bottom";
+    if (Number(indexBox) === 1 || Number(indexBox) === 4)
+      className = "wrapper-board__box wrapper-board__box--border-bottom";
+    if (Number(indexBox) === 2 || Number(indexBox) === 5)
+      className =
+        "wrapper-board__box wrapper-board__box--border-left wrapper-board__box--border-bottom";
+    if (Number(indexBox) === 6)
+      className = "wrapper-board__box wrapper-board__box--border-right ";
+    if (Number(indexBox) === 8)
+      className = "wrapper-board__box wrapper-board__box--border-left";
+    return className;
+  };
   this.renderBoard = function renderBoard(currentDataBoard) {
     currentDataBoard.forEach((dataBox, i) => {
       const boxElement = this.createDomElement(
         "div",
         dataBox,
         [{ name: "data-position", value: i }],
-        "wrapper__box"
+        this.calculateClassNameBox(i)
       );
       this.wrapperBoard.appendChild(boxElement);
     });
@@ -17,55 +35,56 @@ function UI() {
     tag,
     content,
     attributes = [],
-    className = "dfdf"
+    className
   ) {
     const element = document.createElement(tag);
     element.textContent = content;
-    element.classList.add(className);
+    element.className = className;
     attributes.forEach((attribute) => {
       element.setAttribute(attribute.name, attribute.value);
     });
     return element;
   };
-  this.renderWinner = function renderWinner(
+  this.renderResult = function renderWinner(
     currentDataBoard,
-    turn,
-    handleClick
+    handleClick,
+    turn = "",
+    type
   ) {
     this.wrapperBoard.removeEventListener("click", handleClick);
-    this.winnerCont.appendChild(
-      this.createDomElement("h2", "EL GANADOR ES " + turn)
+
+    const button = this.createDomElement(
+      "button",
+      type.textButton,
+      [],
+      "wrapper-winner__button"
     );
-    const button = this.createDomElement("button", "Reiniciar");
     button.addEventListener("click", () => {
       this.clearContentWrapper(this.wrapperBoard);
       this.renderBoard(currentDataBoard);
       this.clearContentWrapper(this.winnerCont);
+      this.winnerCont.style.opacity = 1;
       this.wrapperBoard.addEventListener("click", handleClick);
     });
+    this.winnerCont.appendChild(
+      this.createDomElement(
+        "h2",
+        type.message + turn,
+        [],
+        "wrapper-winner__texto"
+      )
+    );
     this.winnerCont.appendChild(button);
   };
+  this.winnerCont.style.opacity = 1;
   this.clearContentWrapper = function clearWrapper(wrapper) {
     wrapper.innerHTML = "";
-  };
-  this.renderDraw = function renderDraw(currentDataBoard, handleClick) {
-    this.wrapperBoard.removeEventListener("click", handleClick);
-    const drawElement = this.createDomElement("div", "Emplate", [], "winner");
-    const button = this.createDomElement("button", "Reiniciar");
-    button.addEventListener("click", () => {
-      this.clearContentWrapper(this.wrapperBoard);
-      this.renderBoard(currentDataBoard);
-      this.clearContentWrapper(this.winnerCont);
-      wrapper.addEventListener("click", handleClick);
-    });
-    drawElement.appendChild(button);
-    this.winnerCont.appendChild(drawElement);
   };
 }
 
 function Game(UI) {
   this.currentDataBoard = ["", "", "", "", "", "", "", "", ""];
-  this.turn = "x";
+  this.turn = "";
   this.UI = UI;
   this.handleClick = (event) => {
     const box = event.target;
@@ -75,11 +94,17 @@ function Game(UI) {
     this.UI.renderBoard(this.currentDataBoard);
     if (this.checkDraw()) {
       this.resetBoard();
-      this.UI.renderDraw(this.currentDataBoard);
+      this.UI.renderResult(this.currentDataBoard, this.handleClick, "", {
+        message: "Empate!!",
+        textButton: "Reiniciar",
+      });
     }
     if (this.checkWinner()) {
       this.resetBoard();
-      this.UI.renderWinner(this.currentDataBoard, this.turn);
+      this.UI.renderResult(this.currentDataBoard, this.handleClick, this.turn, {
+        message: "HA GANADO ",
+        textButton: "Reiniciar",
+      });
     }
     this.turn = this.turn === "x" ? "o" : "x";
   };
@@ -100,7 +125,7 @@ function Game(UI) {
       ? true
       : false;
   };
-  this.checkWinner = function checkWinner(currentDataBoard) {
+  this.checkWinner = function checkWinner() {
     if (
       (this.currentDataBoard[0] === this.currentDataBoard[1] &&
         this.currentDataBoard[0] === this.currentDataBoard[2] &&
@@ -131,6 +156,6 @@ function Game(UI) {
     return false;
   };
 }
-const interface = new UI();
+const interface = new UI(wrapperBoard, winnerCont);
 const ticTacToe = new Game(interface);
 ticTacToe.init();
