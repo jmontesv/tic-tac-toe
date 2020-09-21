@@ -13,8 +13,8 @@ body {
   display: grid;
   gap: 0.5rem;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, minmax(100px, 1fr));
 }
-
 .wrapper__box {
   display: flex;
   justify-content: center;
