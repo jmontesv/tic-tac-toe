@@ -63,7 +63,7 @@ function UI(wrapperBoard, wrapperWinner) {
       this.clearContentWrapper(this.wrapperBoard);
       this.renderBoard(currentDataBoard);
       this.clearContentWrapper(this.winnerCont);
-      this.winnerCont.style.opacity = 1;
+      this.winnerCont.style.display = "none";
       this.wrapperBoard.addEventListener("click", handleClick);
     });
     this.winnerCont.appendChild(
@@ -75,8 +75,8 @@ function UI(wrapperBoard, wrapperWinner) {
       )
     );
     this.winnerCont.appendChild(button);
+    this.winnerCont.style.display = "flex";
   };
-  this.winnerCont.style.opacity = 1;
   this.clearContentWrapper = function clearWrapper(wrapper) {
     wrapper.innerHTML = "";
   };
@@ -84,7 +84,7 @@ function UI(wrapperBoard, wrapperWinner) {
 
 function Game(UI) {
   this.currentDataBoard = ["", "", "", "", "", "", "", "", ""];
-  this.turn = "";
+  this.turn = "x";
   this.UI = UI;
   this.handleClick = (event) => {
     const box = event.target;
@@ -117,7 +117,7 @@ function Game(UI) {
   };
   this.changeValueBox = function changeValueBox(newValue, index) {
     this.currentDataBoard.forEach((value, i, arrayAll) => {
-      if (i === index && value === "") arrayAll[i] = newValue;
+      if (i === Number(index) && value === "") arrayAll[i] = newValue;
     });
   };
   this.checkDraw = function checkDraw() {
